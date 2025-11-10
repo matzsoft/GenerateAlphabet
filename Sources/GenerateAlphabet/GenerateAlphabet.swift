@@ -1,6 +1,9 @@
 //         FILE: GenerateAlphabet.swift
-//  DESCRIPTION: GenerateAlphabet - ---
-//        NOTES: ---
+//  DESCRIPTION: GenerateAlphabet - Originally created by ChatGPT
+//        NOTES: Generates a file containing a string of utf-8 encoded
+//               charactters of a defined length. The characters must be
+//               printable, not whitespace, and contain no duplicates
+//               even under Unicode normalization.
 //       AUTHOR: Mark T. Johnson, markj@matzsoft.com
 //    COPYRIGHT: © 2025 MATZ Software & Consulting. All rights reserved.
 //      VERSION: 1.0
