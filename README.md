@@ -1,119 +1,121 @@
 # GenerateAlphabet
 
-**GenerateAlphabet** is a Swift command-line utility that creates a UTF-8–encoded text file containing a sequence of unique, printable Unicode characters.
+A Swift command-line utility that generates a string of unique UTF-8 printable characters.  
+The resulting string contains no duplicates, no whitespace, and no combining or control characters — even when normalized under Unicode.
 
-The generated string:
-- Begins with the 62 ASCII alphanumeric characters (`0–9`, `a–z`, `A–Z`)
-- Continues with printable glyphs from across all Unicode planes
-- Excludes whitespace, combining marks, control codes, and duplicates
-- Ensures uniqueness even under **Unicode canonical normalization**
+Originally created by ChatGPT and enhanced by Mark T. Johnson.
 
 ---
 
-## 🧭 Overview
+## Features
 
-| Property | Description |
-|-----------|--------------|
-| **Language** | Swift 6 (or Swift 5.9+) |
-| **Output Encoding** | UTF-8 |
-| **Output File** | `unicode_<N>_chars.txt` |
-| **Default Length** | 1024 characters |
-| **License** | © 2025 MATZ Software & Consulting. All rights reserved. |
-
-This tool is useful for:
-- Testing text rendering, normalization, or collation
-- Stress-testing editors and encoders
-- Generating synthetic data that covers many Unicode blocks
+- Generates a configurable-length string of printable Unicode characters.
+- Ensures no duplicates (including after canonical normalization).
+- Allows custom prefixes (default is alphanumeric: 0–9, a–z, A–Z).
+- Writes output to file or prints directly to stdout.
+- Implemented in pure Swift using Foundation and ArgumentParser.
 
 ---
 
-## ⚙️ Building
+## Installation
 
-You can build or run the package using Swift Package Manager.
+### From Source
 
 ```bash
-git clone https://github.com/<your-username>/GenerateAlphabet.git
+git clone git@github.com:matzsoft/GenerateAlphabet.git
 cd GenerateAlphabet
-swift build
+swift build -c release
+````
+
+This will produce an executable at:
+
+```
+.build/release/GenerateAlphabet
 ```
 
-To run it directly:
+---
+
+## Usage
 
 ```bash
-swift run GenerateAlphabet
+GenerateAlphabet [options]
 ```
 
-This creates a file named:
+### Options
+
+| Option            | Type     | Description                                                                                                                      |
+| ----------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `-l`, `--length`  | *Int*    | The total number of characters in the generated string (default: **1024**).                                                      |
+| `-p`, `--prefix`  | *String* | A custom prefix to include at the start of the string. Defaults to digits 0–9, lowercase a–z, and uppercase A–Z (62 characters). |
+| `-o`, `--outFile` | *String* | The file path for output. Defaults to `unicode_<length>_chars.txt` in the current directory.                                     |
+| `-s`, `--stdout`  | *Flag*   | Output the string directly to standard output instead of writing to a file. Mutually exclusive with `--outFile`.                 |
+| `-h`, `--help`    |          | Show usage information.                                                                                                          |
+
+---
+
+## Examples
+
+Generate the default 1024-character alphabet and save it to the default file:
+
+```bash
+GenerateAlphabet
+```
+
+Generate a 2048-character alphabet and write it to a custom file:
+
+```bash
+GenerateAlphabet --length 2048 --outFile mychars.txt
+```
+
+Generate with a custom prefix and print directly to stdout:
+
+```bash
+GenerateAlphabet --prefix "abc123" --stdout
+```
+
+---
+
+## Output
+
+The generated file will contain a single UTF-8 encoded line of printable characters.
+Example default output file:
 
 ```
 unicode_1024_chars.txt
 ```
 
-in the current working directory.
+---
+
+## License
+
+This project is licensed under the MIT License (see `LICENSE` file).
+
+© 2025 MATZ Software & Consulting. All rights reserved.
+
 
 ---
 
-## 🧩 Command-Line Options
+## ⚖️ `LICENSE`
 
-You can optionally specify the total string length (must be ≥ 62):
+```text
+MIT License
 
-```bash
-swift run GenerateAlphabet 2048
-```
+Copyright (c) 2025 Mark T. Johnson, MATZ Software & Consulting
 
-Example output file:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, subject to the following conditions:
 
-```
-unicode_2048_chars.txt
-```
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
----
-
-## 🔤 Implementation Notes
-
-* **Normalization:**
-  Each glyph is normalized using `.precomposedStringWithCanonicalMapping` before uniqueness testing.
-  This prevents duplicates where different Unicode sequences form the same visual character (e.g., `é` vs. `e\u{0301}`).
-
-* **Exclusions:**
-
-  * Whitespace (`U+0020`, `U+00A0`, `U+2002`, etc.)
-  * Combining marks (`M*` general categories)
-  * Control and format characters (`C*` categories)
-
-* **Determinism:**
-  Because iteration proceeds in ascending code-point order, the generated string is reproducible across runs and systems.
-
----
-
-## 🧱 Example Output
-
-| Prefix                                                           | Example Glyphs                                                               |
-| ---------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` | `¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæç...` |
-
-*(Full file contains exactly 1024 UTF-8 encoded characters.)*
-
----
-
-## 🔮 Future Enhancements
-
-* Support for custom normalization modes (`precomposed` vs. `decomposed`)
-* Optional exclusion of look-alike glyphs across scripts (Latin, Greek, Cyrillic)
-* Integration with UnicodeData.txt for fine-grained script filtering
-* Output table of scalar values for debugging
-
----
-
-## 🧑‍💻 Author
-
-**Mark T. Johnson**
-[markj@matzsoft.com](mailto:markj@matzsoft.com)
-© 2025 [MATZ Software & Consulting](https://matzsoft.com). All rights reserved.
-
----
-
-## 📜 License
-
-This source code is released under your chosen proprietary or open license.
-For internal or client projects, include a `LICENSE` file specifying usage terms.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+````
